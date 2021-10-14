@@ -155,8 +155,6 @@ function _catch(body, recover) {
 function parseSendReturn(sendReturn) {
   return sendReturn.hasOwnProperty("result") ? sendReturn.result : sendReturn;
 }
-console.log("asdfasdf");
-debugger;
 var NoEthereumProviderError = /*#__PURE__*/ (function (_Error) {
   _inheritsLoose(NoEthereumProviderError, _Error);
 
@@ -192,7 +190,6 @@ var InjectedConnector = /*#__PURE__*/ (function (_AbstractConnector) {
     var _this3;
 
     _this3 = _AbstractConnector.call(this, kwargs) || this;
-    debugger;
     _this3.handleNetworkChanged = _this3.handleNetworkChanged.bind(
       _assertThisInitialized(_this3)
     );
@@ -293,9 +290,6 @@ var InjectedConnector = /*#__PURE__*/ (function (_AbstractConnector) {
         return _temp && _temp.then ? _temp.then(_temp2) : _temp2(_temp);
       };
 
-      console.log("---activate----");
-      debugger;
-
       if (!window.ethereum) {
         throw new NoEthereumProviderError();
       }
@@ -323,8 +317,6 @@ var InjectedConnector = /*#__PURE__*/ (function (_AbstractConnector) {
               })
           ).then(function (_window$ethereum$send) {
             account = _window$ethereum$send;
-            console.log("greg", account);
-            debugger;
           });
         },
         function (error) {
