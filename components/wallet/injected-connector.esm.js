@@ -153,6 +153,10 @@ function _catch(body, recover) {
 } // Asynchronously await a promise and pass the result to a finally continuation
 
 function parseSendReturn(sendReturn) {
+  console.log(
+    "parseSendReturn",
+    sendReturn.hasOwnProperty("result") ? sendReturn.result : sendReturn
+  );
   return sendReturn.hasOwnProperty("result") ? sendReturn.result : sendReturn;
 }
 var NoEthereumProviderError = /*#__PURE__*/ (function (_Error) {
@@ -252,6 +256,28 @@ var InjectedConnector = /*#__PURE__*/ (function (_AbstractConnector) {
   };
 
   _proto.activate = function activate() {
+    // TODO: put a proxy on get and then put a proxy on the apply of the return of the get
+    const rubberNeckGet = {
+      get: function (target, prop, receiver) {
+        return new Proxy(Reflect.get(...arguments), rubberNeckApply);
+      },
+    };
+    const rubberNeckApply = {
+      apply: function (tgt, thisArg, argList) {
+        console.log(tgt.name, JSON.stringify(argList, null, 2));
+        debugger;
+        Reflect.apply(tgt, thisArg, argList);
+      },
+    };
+    const ethereumOriginal = window.ethereum;
+    // window.ethereum = new Proxy(ethereumOriginal, rubberNeck);
+    window.ethereum.on = new Proxy(ethereumOriginal.on, rubberNeck);
+    window.ethereum.send = new Proxy(ethereumOriginal.send, rubberNeck);
+    // window.ethereum.sendAsync = new Proxy(
+    //   ethereumOriginal.sendAsync,
+    //   rubberNeck3
+    // );
+
     try {
       var _exit2 = false;
 
