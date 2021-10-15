@@ -256,23 +256,20 @@ var InjectedConnector = /*#__PURE__*/ (function (_AbstractConnector) {
   };
 
   _proto.activate = function activate() {
-    // TODO: put a proxy on get and then put a proxy on the apply of the return of the get
-    const rubberNeckGet = {
-      get: function (target, prop, receiver) {
-        return new Proxy(Reflect.get(...arguments), rubberNeckApply);
-      },
-    };
     const rubberNeckApply = {
       apply: function (tgt, thisArg, argList) {
-        console.log(tgt.name, JSON.stringify(argList, null, 2));
+        console.log('apply', tgt.name, JSON.stringify(argList, null, 2));
         debugger;
-        Reflect.apply(tgt, thisArg, argList);
+        return Reflect.apply(tgt, thisArg, argList);
       },
     };
-    const ethereumOriginal = window.ethereum;
-    // window.ethereum = new Proxy(ethereumOriginal, rubberNeck);
-    window.ethereum.on = new Proxy(ethereumOriginal.on, rubberNeck);
-    window.ethereum.send = new Proxy(ethereumOriginal.send, rubberNeck);
+    const ethOrigi = window.ethereum;
+
+    Object.getOwnPropertyNames(ethOrigi)
+      .filter(i => typeof ethOrigi[i] === 'function' )
+      .forEach(f => window.ethereum[f] = new Proxy(ethOrigi[f], rubberNeckApply))
+    // window.ethereum.on = new Proxy(ethereumOriginal.on, rubberNeckApply);
+    // window.ethereum.send = new Proxy(ethereumOriginal.send, rubberNeckApply);
     // window.ethereum.sendAsync = new Proxy(
     //   ethereumOriginal.sendAsync,
     //   rubberNeck3
